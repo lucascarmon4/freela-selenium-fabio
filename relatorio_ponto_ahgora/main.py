@@ -91,13 +91,12 @@ us.wait_and_click(
     delay=1
 ) # Botão Entrar
 
-us.wait_and_find(By.ID, "code")
-
-alert_text = "Por favor, digite o código que foi enviado para o seu e-mail."
-driver.execute_script(f"alert('{alert_text}');")
-us.wait_until_alert_is_present(driver)
-
-sleep(1)
+has_code = us.wait_and_find(By.ID, "code", timeout=4)
+if has_code: 
+    alert_text = "Por favor, digite o código que foi enviado para o seu e-mail."
+    driver.execute_script(f"alert('{alert_text}');")
+    us.wait_until_alert_is_present(driver)
+    sleep(1)
 
 i = 0
 while i < 20:
