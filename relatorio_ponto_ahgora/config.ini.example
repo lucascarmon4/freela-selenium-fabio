@@ -1,0 +1,15 @@
+[PARAMETROS]
+cliente = SHOPEE
+usuario_ahgora = vanessa.souza@informatecservicos.com.br
+
+[DIRETORIOS]
+origem = D:\dev\freela\relatorio_ponto_ahgora\data\origem
+saida = D:\dev\freela\relatorio_ponto_ahgora\data\saida
+
+[DB]
+server =
+database = 
+username = 
+password = 
+cript = 0
+

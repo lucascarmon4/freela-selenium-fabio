@@ -1,0 +1,9 @@
+__pycache__
+.venv
+venv
+data
+*.exe
+build
+*.zip
+*.spec
+.pytest_cache

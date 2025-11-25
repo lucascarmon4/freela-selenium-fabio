@@ -1,0 +1,4 @@
+servidor : db.informatecservicos.com.br
+banco : informatec_rpa
+usuário : informatec_rpa
+senha : ApAMYVtK!Gb27BT
