@@ -25,7 +25,7 @@ db=SQLServerHelper(config)
 db.connect()
 
 # Verificação da licença
-ok_license, mac = check_license(db, config['cliente'])
+ok_license, machine_guid = check_license(db, config['cliente'])
 if not ok_license:
     input("Pressione Enter para sair...")
     sys.exit(1)
@@ -158,11 +158,11 @@ end_time = datetime.now()
 
 insert_statistics = """
     INSERT INTO processados
-    (mac_address, data_inicio, data_termino, total_processos, produto, cliente)
+    (machine_guid, data_inicio, data_termino, total_processos, produto, cliente)
     VALUES (?, ?, ?, ?, ?, ?)
 """
 
-db.execute(insert_statistics, [mac, start_time, end_time, contador, PRODUTO, config["cliente"]])
+db.execute(insert_statistics, [machine_guid, start_time, end_time, contador, PRODUTO, config["cliente"]])
 log.success("Estatísticas do processamento salvas com sucesso.")
 
 db.close()

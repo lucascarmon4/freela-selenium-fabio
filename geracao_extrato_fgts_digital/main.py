@@ -25,7 +25,7 @@ db.connect()
 company_name, company_cnpj = service.choose_company(db, config)
 
 # Verificação da licença
-ok_license, mac = check_license(db)
+ok_license, machine_guid = check_license(db)
 if not ok_license:
     sys.exit(1)
 
@@ -187,13 +187,13 @@ log.success("Todos os extratos do FGTS da planilha foram gerados com sucesso.")
 
 insert_statistics = """
     INSERT INTO processados
-    (mac_address, data_inicio, data_termino, total_processos, produto, cliente)
+    (machine_guid, data_inicio, data_termino, total_processos, produto, cliente)
     VALUES (?, ?, ?, ?, ?, ?)
 """
 
 produto = "extrato_fgts"    
 
-db.execute(insert_statistics, [mac, start_time, end_time, cont, produto, config["cliente"]])
+db.execute(insert_statistics, [machine_guid, start_time, end_time, cont, produto, config["cliente"]])
 log.success("Estatísticas do processamento salvas com sucesso.")
 
 db.close()

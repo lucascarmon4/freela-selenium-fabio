@@ -1,34 +1,46 @@
 from utils.log import UtilsLog
 from datetime import datetime
-import socket, uuid
+import socket
+import winreg
 
-def get_hostname_mac():
+
+def get_machine_guid():
+    key = winreg.OpenKey(
+        winreg.HKEY_LOCAL_MACHINE,
+        r"SOFTWARE\Microsoft\Cryptography",
+        0,
+        winreg.KEY_READ
+    )
+    value, _ = winreg.QueryValueEx(key, "MachineGuid")
+    return value
+
+def get_hostname_machine_guid():
     hostname = socket.gethostname()
-    mac = ':'.join(['{:02X}'.format((uuid.getnode() >> i) & 0xff) for i in range(40, -1, -8)])
-    return hostname, mac
+    machine_guid = get_machine_guid()
+    return hostname, machine_guid
 
 def check_license(db):
-    hostname, mac = get_hostname_mac()
+    hostname, machine_guid = get_hostname_machine_guid()
 
     result = db.query("""
         SELECT data_vencimento, descricao_local FROM licencas
-        WHERE hostname = ? AND mac_address = ? AND status_licenca = 1 AND produto = 'extrato_fgts'
-    """, [hostname, mac])
+        WHERE hostname = ? AND machine_guid = ? AND status_licenca = 1 AND produto = 'extrato_fgts'
+    """, [hostname, machine_guid])
 
     if not result:
-        UtilsLog.error(f"Licença inativa, favor entrar em contato com administrador: {hostname} ({mac})")
+        UtilsLog.error(f"Licença inativa, favor entrar em contato com administrador: {hostname} ({machine_guid})")
         return False, None
 
     vencimento = result[0]['data_vencimento']
 
     if vencimento and datetime.strptime(str(vencimento), "%Y-%m-%d %H:%M:%S") < datetime.now():
-        UtilsLog.warning(f"Licença expirada, favor entrar em contato com administrador: {hostname} ({mac})")
-        return False, mac
+        UtilsLog.warning(f"Licença expirada, favor entrar em contato com administrador: {hostname} ({machine_guid})")
+        return False, machine_guid
 
     db.execute("""
         UPDATE licencas SET data_ultimo_acesso = GETDATE()
-        WHERE hostname = ? AND mac_address = ?
-    """, [hostname, mac])
+        WHERE hostname = ? AND machine_guid = ?
+    """, [hostname, machine_guid])
 
-    UtilsLog.success(f"Máquina autorizada: {hostname} ({mac})")
-    return True, mac
+    UtilsLog.success(f"Máquina autorizada: {hostname} ({machine_guid})")
+    return True, machine_guid

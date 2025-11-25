@@ -1,6 +1,6 @@
 from utils.log import UtilsLog
 from datetime import datetime
-import socket, uuid
+import socket
 import winreg
 
 
