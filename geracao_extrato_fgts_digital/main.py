@@ -27,6 +27,7 @@ company_name, company_cnpj = service.choose_company(db, config)
 # Verificação da licença
 ok_license, machine_guid = check_license(db)
 if not ok_license:
+    input("Pressione Enter para sair...")
     sys.exit(1)
 
 log.warning("Por favor, selecione o arquivo Excel com os CPFs dos funcionários.")
@@ -38,14 +39,17 @@ file_path = filedialog.askopenfilename(
 save_origem(os.path.dirname(file_path))
 if not file_path:
     log.error("Nenhum arquivo selecionado. Encerrando o programa.")
+    input("Pressione Enter para sair...")
     sys.exit(1)
 
 file = pd.read_excel(file_path)
 if file.empty:
     log.error("O arquivo está vazio. Encerrando o programa.")
+    input("Pressione Enter para sair...")
     sys.exit(1)
 
 if not (utils.file.verify_required_columns(file, ['CPF', 'Data De Deslig']) and utils.file.verify_file_extension(file_path, ['.xlsx'])):
+    input("Pressione Enter para sair...")
     sys.exit(1)
 
 log.info("Inicializando Chrome...")
@@ -198,6 +202,5 @@ log.success("Estatísticas do processamento salvas com sucesso.")
 
 db.close()
 driver.quit()
-
-sleep(60)
+input("Processo concluído. Pressione Enter para sair...")
 # %%
